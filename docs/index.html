@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>وثيقة مشروع 80211Probe</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8f9fa; color: #333; line-height: 1.6; padding: 20px; margin: 0; }
+        .container { max-width: 900px; margin: auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        h1 { color: #0056b3; text-align: center; border-bottom: 2px solid #0056b3; padding-bottom: 10px; }
+        h2 { color: #d9534f; margin-top: 30px; border-right: 4px solid #d9534f; padding-right: 10px; }
+        .code-box { background: #2d2d2d; color: #f8f8f2; padding: 15px; border-radius: 5px; direction: ltr; text-align: left; font-family: Consolas, monospace; margin: 10px 0; }
+        ul { margin-right: 20px; }
+        li { margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📡 توثيق مشروع: 80211Probe</h1>
+        <p style="text-align: center; font-weight: bold;">أداة متقدمة لتحليل إطارات شبكات Wi-Fi (IEEE 802.11) - مبنية بلغة Pure Python</p>
+
+        <h2>1. المشكلة (The Problem)</h2>
+        <p>تنتقل البيانات في الشبكات اللاسلكية (Wi-Fi) على هيئة تيار من البيانات الثنائية (Raw Bytes) غير المفهومة للبشر. يعاني محللو الأمن السيبراني من أن أغلب أدوات فحص الشبكات تعتمد على مكتبات خارجية جاهزة تقوم بالعمل بالنيابة عنهم، مما يمنع الفهم العميق لكيفية بناء الإطارات (Frames) وكيفية التلاعب بها أو استخراج الأدلة الجنائية منها.</p>
+
+        <h2>2. فكرة المشروع (Project Idea)</h2>
+        <p>بناء أداة هندسية وأمنية (80211Probe) تعمل من واجهة سطر الأوامر (CLI)، قادرة على قراءة البايتات الثنائية الخام لإطارات IEEE 802.11 وتحليلها بتّاً بـ بت (Bit-by-Bit) باستخدام العمليات الثنائية، وذلك لاستخراج تفاصيل دقيقة مثل: نوع الإطار، عناوين الـ MAC للمرسل والمستقبل، واسم الشبكة (SSID). تم بناء المشروع بالكامل باستخدام <strong>بايثون الخالصة (Pure Python)</strong> دون أي مكتبات خارجية لتنفيذ جوهر الفكرة.</p>
+
+        <h2>3. الهدف (The Objective)</h2>
+        <ul>
+            <li>التطبيق العملي لمفاهيم <strong>الأمن السيبراني والتحليل الجنائي للشبكات (Network Forensics)</strong>.</li>
+            <li>الاستغناء عن المكتبات الجاهزة وبناء (Parser) من الصفر للتعامل مع Endianness والبتات.</li>
+            <li>بناء أداة قابلة للتوسع وتدعم معالجة الأخطاء بذكاء بحيث لا تنهار الأداة عند إدخال بيانات تالفة.</li>
+            <li>فصل معمارية المشروع (Architecture) إلى طبقات: القراءة، التحليل، الواجهة، والتقارير.</li>
+        </ul>
+
+        <h2>4. طريقة التشغيل (How to Run)</h2>
+        <p>الأداة مصممة للعمل كأداة اختراق وتحليل احترافية عبر سطر الأوامر (CLI)، وتدعم الخيارات التالية:</p>
+        <div class="code-box">
+            # لمعرفة تفاصيل الأداة والأوامر المتاحة<br>
+            python main.py --help<br><br>
+            
+            # لمعرفة رقم الإصدار<br>
+            python main.py --version<br><br>
+            
+            # لتحليل ملف شبكة ثنائي وعرض النتائج كنص عادي<br>
+            python main.py parse sample_beacon.bin<br><br>
+            
+            # لتحليل إطار تجريبي مدمج داخل الأداة<br>
+            python main.py parse --demo
+        </div>
+
+        <h2>5. النتائج والمخرجات (Outputs)</h2>
+        <p>تدعم الأداة ثلاثة أنواع من المخرجات الاحترافية:</p>
+        <ul>
+            <li><strong>المخرجات النصية (Standard Output):</strong> ملخص سريع ومباشر على الشاشة يوضح (النوع، المرسل، الـ BSSID، واسم الشبكة).</li>
+            <li><strong>مخرجات JSON:</strong> عبر إضافة خيار <span style="background: #eee; padding: 2px 5px; border-radius: 3px;">--json</span>، تقوم الأداة بتصدير البيانات بصيغة مفهومة للآلة لاستخدامها في أدوات أمنية أخرى.</li>
+            <li><strong>تقارير HTML:</strong> عبر إضافة خيار <span style="background: #eee; padding: 2px 5px; border-radius: 3px;">--html</span>، تقوم الأداة بتوليد تقرير ويب تفاعلي وجميل يسهل قراءته وتحليل الأدلة الجنائية من خلاله.</li>
+        </ul>
+        
+        <p style="text-align: center; margin-top: 40px; color: #777;">تم تطوير هذا المشروع كمتطلب أكاديمي لتقييم مهارات الأمن السيبراني وهندسة البرمجيات.</p>
+    </div>
+</body>
+</html>
