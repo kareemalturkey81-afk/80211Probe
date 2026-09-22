@@ -1,18 +1,26 @@
+# parser/control.py
 from models.frames import FrameControl
 
 def parse_frame_control(fc_value: int) -> FrameControl:
     """
-    يحلل قيمة الـ Frame Control (16 بت) ويستخرج الحقول والـ Flags
-    باستخدام العمليات الثنائية (Bitwise Operations).
-    """
-    # استخراج الحقول الأساسية
-    # نستخدم (Bitmask) لعزل البتات، ثم الإزاحة لليمين (>>) لقراءة قيمتها
-    protocol_version = fc_value & 0b0000000000000011         # أول 2 بت
-    frame_type       = (fc_value & 0b0000000000001100) >> 2  # البتات 2-3
-    frame_subtype    = (fc_value & 0b0000000011110000) >> 4  # البتات 4-7
+    يحلل قيمة الـ Frame Control (16 بت) باستخدام Bitwise Operations.
+    بروتوكول 802.11 يقسم هذه الـ 16 بت كالتالي:
     
-    # استخراج الـ Flags (كل فلاج يمثل بت واحد فقط)
-    # نستخدم الإزاحة لليسار (<<) للتحقق مما إذا كان البت مفعل (1) أم لا (0)
+    البايت الأول:
+    - Protocol Version: 2 bits
+    - Type: 2 bits
+    - Subtype: 4 bits
+    
+    البايت الثاني (Flags):
+    - To DS, From DS, More Frag, Retry, Power Mgmt, More Data, Protected, Order (1 بت لكل منها)
+    """
+    
+    # استخراج الحقول من البايت الأول (البتات من 0 إلى 7)
+    protocol_version = fc_value & 0b00000011                  # قناع لأول 2 بت
+    frame_type       = (fc_value & 0b00001100) >> 2           # إزاحة بمقدار 2
+    frame_subtype    = (fc_value & 0b11110000) >> 4           # إزاحة بمقدار 4
+
+    # استخراج الـ Flags من البايت الثاني (البتات من 8 إلى 15)
     to_ds            = bool(fc_value & (1 << 8))
     from_ds          = bool(fc_value & (1 << 9))
     more_fragments   = bool(fc_value & (1 << 10))
