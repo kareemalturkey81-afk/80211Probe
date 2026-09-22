@@ -3,26 +3,20 @@ from dataclasses import dataclass
 
 @dataclass
 class SequenceControl:
-    """نموذج بيانات لتخزين معلومات التسلسل."""
+    """نموذج لتمثيل حقل التحكم في التسلسل (Sequence Control)"""
     fragment_number: int
     sequence_number: int
 
     def __str__(self) -> str:
-        return f"SequenceControl(Sequence Number: {self.sequence_number}, Fragment Number: {self.fragment_number})"
+        return f"Seq: {self.sequence_number}, Frag: {self.fragment_number}"
 
 def parse_sequence_control(seq_value: int) -> SequenceControl:
     """
-    يحلل حقل Sequence Control (16 بت) إلى:
-    - Fragment Number: يأخذ أول 4 بت (نستخدم القناع 0x000F)
-    - Sequence Number: يأخذ الـ 12 بت المتبقية (نستخدم القناع 0xFFF0 ثم نزيح لليمين بـ 4)
+    يحلل 16 بت باستخدام Bitwise Operations:
+    - أول 4 بت: Fragment Number
+    - الـ 12 بت المتبقية: Sequence Number
     """
-    # 0x000F بالثنائي تعني 0000000000001111 (لعزل أول 4 بت)
-    fragment_number = seq_value & 0x000F 
+    frag_num = seq_value & 0b0000000000001111        # قناع لأول 4 بت
+    seq_num  = (seq_value & 0b1111111111110000) >> 4 # قناع وإزاحة لآخر 12 بت
     
-    # 0xFFF0 بالثنائي تعني 1111111111110000 (لعزل باقي البتات ثم دفعها لليمين)
-    sequence_number = (seq_value & 0xFFF0) >> 4 
-    
-    return SequenceControl(
-        fragment_number=fragment_number,
-        sequence_number=sequence_number
-    )
+    return SequenceControl(fragment_number=frag_num, sequence_number=seq_num)
